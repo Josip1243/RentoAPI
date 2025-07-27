@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rento.Api", "Rento.Api\Rento.Api.csproj", "{953FDD0B-B434-408F-BCAE-95E27600FDD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rento.Contracts", "Rento.Contracts\Rento.Contracts.csproj", "{79AD0363-BA30-48BA-A6E2-9E484A370AF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rento.Infrastructure", "Rento.Infrastructure\Rento.Infrastructure.csproj", "{71C41AE2-8AF7-4CE9-948F-D068D6DEF805}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rento.Application", "Rento.Application\Rento.Application.csproj", "{8DEAF0BE-D3B6-4E28-9330-B3A15534F209}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rento.Domain", "Rento.Domain\Rento.Domain.csproj", "{F07336D1-FBAE-40B8-A101-48254D9BA3D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{953FDD0B-B434-408F-BCAE-95E27600FDD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{953FDD0B-B434-408F-BCAE-95E27600FDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{953FDD0B-B434-408F-BCAE-95E27600FDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{953FDD0B-B434-408F-BCAE-95E27600FDD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79AD0363-BA30-48BA-A6E2-9E484A370AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79AD0363-BA30-48BA-A6E2-9E484A370AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79AD0363-BA30-48BA-A6E2-9E484A370AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79AD0363-BA30-48BA-A6E2-9E484A370AF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71C41AE2-8AF7-4CE9-948F-D068D6DEF805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71C41AE2-8AF7-4CE9-948F-D068D6DEF805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71C41AE2-8AF7-4CE9-948F-D068D6DEF805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71C41AE2-8AF7-4CE9-948F-D068D6DEF805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DEAF0BE-D3B6-4E28-9330-B3A15534F209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DEAF0BE-D3B6-4E28-9330-B3A15534F209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DEAF0BE-D3B6-4E28-9330-B3A15534F209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DEAF0BE-D3B6-4E28-9330-B3A15534F209}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F07336D1-FBAE-40B8-A101-48254D9BA3D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F07336D1-FBAE-40B8-A101-48254D9BA3D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F07336D1-FBAE-40B8-A101-48254D9BA3D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F07336D1-FBAE-40B8-A101-48254D9BA3D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C7CD953E-F2D1-4287-A692-BDF9802A3198}
+	EndGlobalSection
+EndGlobal
