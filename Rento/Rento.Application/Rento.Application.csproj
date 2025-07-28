@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Rento.Domain\Rento.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Authentication\Queries\" />
+  </ItemGroup>
+
 </Project>
