@@ -16,5 +16,8 @@ namespace Rento.Domain.Entities
         public UserRole Role { get; set; } = UserRole.Customer;
         public bool Verified { get; set; } = false;
         public DateTime CreatedAt { get; set; }
+
+        public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
+
     }
 }

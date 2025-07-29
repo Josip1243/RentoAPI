@@ -32,6 +32,7 @@ namespace Rento.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
 
             return services;
         }

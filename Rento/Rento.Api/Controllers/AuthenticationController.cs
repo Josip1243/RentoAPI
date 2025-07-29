@@ -9,7 +9,7 @@ using Rento.Domain.Common.Errors;
 
 namespace Rento.Api.Controllers
 {
-    [Route("authentication")]
+    [Route("[controller]")]
     [AllowAnonymous]
     public class AuthenticationController : ApiController
     {

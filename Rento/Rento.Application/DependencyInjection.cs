@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Rento.Application.Authentication.Commands.Register;
@@ -17,6 +19,11 @@ namespace Rento.Application
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddScoped<IValidator<RegisterCommand>, RegisterCommandValidator>();
+
+            var config = TypeAdapterConfig.GlobalSettings;
+            config.Scan(assembly);
+            services.AddSingleton(config);
+            services.AddScoped<IMapper, ServiceMapper>();
 
             return services;
         }
