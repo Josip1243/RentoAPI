@@ -1,4 +1,5 @@
-﻿using MapsterMapper;
+﻿using Azure.Core;
+using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Rento.Application.Vehicles.Commands.CreateVehicle;
 using Rento.Application.Vehicles.Commands.DeleteVehicle;
 using Rento.Application.Vehicles.Commands.UpdateVehicle;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
+using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
 using Rento.Application.Vehicles.Queries.GetVehicleById;
 using Rento.Contracts.Vehicles;
 
@@ -28,6 +30,20 @@ namespace Rento.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var query = new GetAllVehiclesQuery();
+            var result = await _mediator.Send(query, cancellationToken);
+
+            return result.Match(
+                vehicles => Ok(_mapper.Map<List<VehicleResponse>>(vehicles)),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpGet("filter")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFiltered([FromQuery] VehicleFilterRequest filter, CancellationToken cancellationToken)
+        {
+            var query = _mapper.Map<GetAllVehiclesFilterQuery>(filter);
+
             var result = await _mediator.Send(query, cancellationToken);
 
             return result.Match(

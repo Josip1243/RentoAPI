@@ -1,4 +1,6 @@
-﻿using Rento.Domain.Entities;
+﻿using Rento.Application.Vehicles.Queries.GetAllVehicles;
+using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
+using Rento.Domain.Entities;
 
 namespace Rento.Application.Common.Interfaces.Persistence
 {
@@ -11,5 +13,6 @@ namespace Rento.Application.Common.Interfaces.Persistence
         void Remove(Vehicle vehicle);
         Task<bool> ExistsWithRegistrationAsync(string registrationNumber);
         Task<bool> ExistsWithChassisAsync(string chassisNumber);
+        Task<List<Vehicle>> GetFilteredAsync(GetAllVehiclesFilterQuery query, CancellationToken cancellationToken);
     }
 }
