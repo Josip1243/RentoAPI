@@ -1,8 +1,11 @@
-﻿using MediatR;
+﻿using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Rento.Application.Vehicles.Commands.CreateVehicle;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetVehicleById;
+using Rento.Contracts.Vehicles;
 
 namespace Rento.Api.Controllers
 {
@@ -10,10 +13,12 @@ namespace Rento.Api.Controllers
     public class VehicleController : ApiController
     {
         private readonly ISender _mediator;
+        private readonly IMapper _mapper;
 
-        public VehicleController(ISender mediator)
+        public VehicleController(ISender mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -24,7 +29,7 @@ namespace Rento.Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
 
             return result.Match(
-                vehicles => Ok(vehicles),
+                vehicles => Ok(_mapper.Map<List<VehicleResponse>>(vehicles)),
                 errors => Problem(errors)
             );
         }
@@ -37,7 +42,21 @@ namespace Rento.Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
 
             return result.Match(
-                vehicle => Ok(vehicle),
+                vehicle => Ok(_mapper.Map<VehicleResponse>(vehicle)),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Create(CreateVehicleRequest request, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<CreateVehicleCommand>(request);
+
+            var result = await _mediator.Send(command, cancellationToken);
+
+            return result.Match(
+                vehicle => Ok(_mapper.Map<VehicleResponse>(vehicle)),
                 errors => Problem(errors)
             );
         }

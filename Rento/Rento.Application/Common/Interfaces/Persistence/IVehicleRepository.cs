@@ -9,5 +9,7 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
         Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default);
         void Remove(Vehicle vehicle);
+        Task<bool> ExistsWithRegistrationAsync(string registrationNumber);
+        Task<bool> ExistsWithChassisAsync(string chassisNumber);
     }
 }

@@ -40,5 +40,15 @@ namespace Rento.Infrastructure.Persistence.Repositories
         {
             _context.Vehicles.Remove(vehicle);
         }
+
+        public async Task<bool> ExistsWithRegistrationAsync(string registrationNumber)
+        {
+            return await _context.Vehicles.AnyAsync(v => v.RegistrationNumber == registrationNumber);
+        }
+
+        public async Task<bool> ExistsWithChassisAsync(string chassisNumber)
+        {
+            return await _context.Vehicles.AnyAsync(v => v.ChassisNumber == chassisNumber);
+        }
     }
 }

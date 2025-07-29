@@ -2,6 +2,8 @@
 {
     public interface IUnitOfWork
     {
-        Task<int> SaveChangesAsync(CancellationToken ct = default);
+        IVehicleRepository Vehicles { get; }
+
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

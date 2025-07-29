@@ -45,6 +45,9 @@ namespace Rento.Infrastructure.Persistence.Configurations
                 .WithMany(u => u.Vehicles)
                 .HasForeignKey(v => v.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(v => v.RegistrationNumber).IsUnique();
+            builder.HasIndex(v => v.ChassisNumber).IsUnique();
         }
     }
 }
