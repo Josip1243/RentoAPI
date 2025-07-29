@@ -16,17 +16,18 @@ namespace Rento.Application.Authentication.Commands.Register
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
-        // TODO: Add password hashing
-        //private readonly IPasswordHasher _passwordHasher;
+        private readonly IPasswordHasher _passwordHasher;
 
         public RegisterCommandHandler(
             IJwtTokenGenerator jwtTokenGenerator,
             IUserRepository userRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IPasswordHasher passwordHasher)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand command, CancellationToken ct)
@@ -39,7 +40,7 @@ namespace Rento.Application.Authentication.Commands.Register
                 FirstName = command.FirstName,
                 LastName = command.LastName,
                 Email = command.Email,
-                Password = command.Password, // Note: Password should be hashed in a real application
+                Password = _passwordHasher.Hash(command.Password),
                 Role = UserRole.Customer,
                 Verified = false,
                 CreatedAt = DateTime.UtcNow
