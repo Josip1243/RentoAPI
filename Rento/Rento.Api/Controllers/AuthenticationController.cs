@@ -3,7 +3,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rento.Application.Authentication.Commands.Register;
+using Rento.Application.Authentication.Queries.Login;
 using Rento.Contracts.Authentication;
+using Rento.Domain.Common.Errors;
 
 namespace Rento.Api.Controllers
 {
@@ -31,22 +33,22 @@ namespace Rento.Api.Controllers
                 errors => Problem(errors));
         }
 
-        //[HttpPost("login")]
-        //public async Task<IActionResult> Login(LoginRequest request)
-        //{
-        //    var query = _mapper.Map<LoginQuery>(request);
-        //    var authResult = await _mediator.Send(query);
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest request)
+        {
+            var query = _mapper.Map<LoginQuery>(request);
+            var authResult = await _mediator.Send(query);
 
-        //    if (authResult.IsError && authResult.FirstError == Errors.Authentication.InvalidCredentials)
-        //    {
-        //        return Problem(
-        //            statusCode: StatusCodes.Status401Unauthorized,
-        //            title: authResult.FirstError.Description);
-        //    }
+            if (authResult.IsError && authResult.FirstError == Errors.Authentication.InvalidCredentials)
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: authResult.FirstError.Description);
+            }
 
-        //    return authResult.Match(
-        //        authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
-        //        errors => Problem(errors));
-        //}
+            return authResult.Match(
+                authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
+                errors => Problem(errors));
+        }
     }
 }
