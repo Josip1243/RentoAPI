@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
+using Rento.Application.Vehicles.Queries.GetVehicleById;
 
 namespace Rento.Api.Controllers
 {
@@ -28,16 +29,17 @@ namespace Rento.Api.Controllers
             );
         }
 
-        //[HttpGet("{id:int}")]
-        //public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
-        //{
-        //    var query = new GetVehicleByIdQuery(id);
-        //    var result = await _mediator.Send(query, cancellationToken);
+        [HttpGet("{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+        {
+            var query = new GetVehicleByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
 
-        //    return result.Match(
-        //        vehicle => Ok(vehicle),
-        //        errors => NotFound(errors.First().Description)
-        //    );
-        //}
+            return result.Match(
+                vehicle => Ok(vehicle),
+                errors => Problem(errors)
+            );
+        }
     }
 }
