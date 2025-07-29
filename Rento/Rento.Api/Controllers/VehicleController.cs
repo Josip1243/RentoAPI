@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rento.Application.Vehicles.Commands.CreateVehicle;
+using Rento.Application.Vehicles.Commands.DeleteVehicle;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetVehicleById;
 using Rento.Contracts.Vehicles;
@@ -48,7 +49,6 @@ namespace Rento.Api.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Create(CreateVehicleRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<CreateVehicleCommand>(request);
@@ -60,5 +60,18 @@ namespace Rento.Api.Controllers
                 errors => Problem(errors)
             );
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var command = new DeleteVehicleCommand(id);
+            var result = await _mediator.Send(command, cancellationToken);
+
+            return result.Match(
+                _ => NoContent(),
+                errors => Problem(errors)
+            );
+        }
+
     }
 }
