@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
 using Rento.Application.Common.Interfaces.Persistence;
 
-namespace Rento.Application.Vehicles.Commands.CreateVehicle
+namespace Rento.Application.Vehicles.Commands.UpdateVehicle
 {
-    public class CreateVehicleCommandValidator : AbstractValidator<CreateVehicleCommand>
+    public class UpdateVehicleCommandValidator : AbstractValidator<UpdateVehicleCommand>
     {
-        public CreateVehicleCommandValidator(IVehicleRepository vehicleRepository, IUserRepository userRepository)
+        public UpdateVehicleCommandValidator(IVehicleRepository vehicleRepository, IUserRepository userRepository)
         {
+            RuleFor(x => x.Id).GreaterThan(0);
             RuleFor(x => x.Brand).NotEmpty().MaximumLength(100);
             RuleFor(x => x.Model).NotEmpty().MaximumLength(100);
             RuleFor(x => x.Year).InclusiveBetween(1990, DateTime.UtcNow.Year + 1);

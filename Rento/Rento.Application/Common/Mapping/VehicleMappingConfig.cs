@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Rento.Application.Vehicles.Commands.UpdateVehicle;
 using Rento.Application.Vehicles.Common;
 using Rento.Domain.Entities;
 

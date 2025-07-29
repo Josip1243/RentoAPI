@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rento.Application.Vehicles.Commands.CreateVehicle;
 using Rento.Application.Vehicles.Commands.DeleteVehicle;
+using Rento.Application.Vehicles.Commands.UpdateVehicle;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetVehicleById;
 using Rento.Contracts.Vehicles;
@@ -52,6 +53,25 @@ namespace Rento.Api.Controllers
         public async Task<IActionResult> Create(CreateVehicleRequest request, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<CreateVehicleCommand>(request);
+
+            var result = await _mediator.Send(command, cancellationToken);
+
+            return result.Match(
+                vehicle => Ok(_mapper.Map<VehicleResponse>(vehicle)),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpPut("{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Update(int id, UpdateVehicleRequest request, CancellationToken cancellationToken)
+        {
+            if (id != request.Id)
+            {
+                return BadRequest("ID u ruti i tijelu zahtjeva moraju biti isti.");
+            }
+
+            var command = _mapper.Map<UpdateVehicleCommand>(request);
 
             var result = await _mediator.Send(command, cancellationToken);
 

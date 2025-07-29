@@ -15,6 +15,11 @@ namespace Rento.Infrastructure.Persistence.Repositories
         public async Task<bool> ExistsByEmailAsync(string email, CancellationToken ct = default) =>
             await _context.Users.AnyAsync(u => u.Email == email, ct);
 
+        public async Task<bool> ExistsByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Users.AnyAsync(u => u.Id == id, cancellationToken);
+        }
+
         public async Task<User?> GetByEmailAsync(string email, CancellationToken ct = default) =>
             await _context.Users.SingleOrDefaultAsync(u => u.Email == email, ct);
 
