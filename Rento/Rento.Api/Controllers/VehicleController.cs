@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using ErrorOr;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,9 @@ using Rento.Application.Vehicles.Commands.DeleteVehicle;
 using Rento.Application.Vehicles.Commands.UpdateVehicle;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
+using Rento.Application.Vehicles.Queries.GetReservedDatesById;
 using Rento.Application.Vehicles.Queries.GetVehicleById;
+using Rento.Contracts.Reservations;
 using Rento.Contracts.Vehicles;
 
 namespace Rento.Api.Controllers
@@ -109,5 +112,17 @@ namespace Rento.Api.Controllers
             );
         }
 
+        [HttpGet("{id}/reserved-dates")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetReservedDates(int id, CancellationToken cancellationToken)
+        {
+            var command = new GetReservedDatesQuery(id);
+            var result = await _mediator.Send(command, cancellationToken);
+
+            return result.Match(
+                dates => Ok(_mapper.Map<List<ReservationDateRangeResponse>>(dates)),
+                errors => Problem(errors)
+            );
+        }
     }
 }

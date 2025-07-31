@@ -14,6 +14,7 @@ namespace Rento.Api.Mapping
             config.NewConfig<CreateVehicleRequest, CreateVehicleCommand>();
             config.NewConfig<UpdateVehicleRequest, UpdateVehicleCommand>();
             config.NewConfig<VehicleFilterRequest, GetAllVehiclesFilterQuery>();
+
         }
     }
 }
