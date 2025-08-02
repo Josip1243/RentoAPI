@@ -34,6 +34,7 @@ namespace Rento.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
 
 
             return services;

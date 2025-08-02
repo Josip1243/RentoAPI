@@ -27,6 +27,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(policy =>
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader());
+
 app.UseExceptionHandler("/error");
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
