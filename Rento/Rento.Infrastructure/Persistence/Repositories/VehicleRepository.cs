@@ -55,7 +55,7 @@ namespace Rento.Infrastructure.Persistence.Repositories
 
         public async Task<List<Vehicle>> GetFilteredAsync(GetAllVehiclesFilterQuery request, CancellationToken cancellationToken)
         {
-            var query = _context.Vehicles.AsQueryable();
+            var query = _context.Vehicles.Include(v => v.Images).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
@@ -99,14 +99,21 @@ namespace Rento.Infrastructure.Persistence.Repositories
                     ? query.OrderByDescending(v => v.Year)
                     : query.OrderBy(v => v.Year),
 
-                _ => query.OrderBy(v => v.Id)
+                _ => query
             };
 
             // Paginacija
-            int skip = (request.PageNumber - 1) * request.PageSize;
+            int skip = (request.PageNumber) * request.PageSize;
             query = query.Skip(skip).Take(request.PageSize);
 
-            return await query.ToListAsync(cancellationToken);
+            var result = await query.ToListAsync(cancellationToken);
+
+            return result;
+        }
+
+        public async Task<int> GetCount()
+        {
+            return await _context.Vehicles.CountAsync();
         }
     }
 }

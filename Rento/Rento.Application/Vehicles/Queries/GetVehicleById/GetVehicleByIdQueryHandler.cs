@@ -8,7 +8,7 @@ using Rento.Domain.Common.Errors;
 namespace Rento.Application.Vehicles.Queries.GetVehicleById
 {
     public class GetVehicleByIdQueryHandler
-    : IRequestHandler<GetVehicleByIdQuery, ErrorOr<VehicleResponse>>
+    : IRequestHandler<GetVehicleByIdQuery, ErrorOr<VehicleResult>>
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace Rento.Application.Vehicles.Queries.GetVehicleById
             _mapper = mapper;
         }
 
-        public async Task<ErrorOr<VehicleResponse>> Handle(GetVehicleByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<VehicleResult>> Handle(GetVehicleByIdQuery request, CancellationToken cancellationToken)
         {
             var vehicle = await _vehicleRepository.GetByIdAsync(request.Id, cancellationToken);
 
@@ -28,7 +28,7 @@ namespace Rento.Application.Vehicles.Queries.GetVehicleById
                 return Errors.Vehicle.VehicleNotFound;
             }
 
-            var response = _mapper.Map<VehicleResponse>(vehicle);
+            var response = _mapper.Map<VehicleResult>(vehicle);
             return response;
         }
     }

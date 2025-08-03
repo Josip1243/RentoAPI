@@ -7,7 +7,7 @@ using Rento.Application.Vehicles.Common;
 namespace Rento.Application.Vehicles.Queries.GetAllVehicles
 {
     public class GetAllVehiclesQueryHandler
-    : IRequestHandler<GetAllVehiclesQuery, ErrorOr<List<VehicleResponse>>>
+    : IRequestHandler<GetAllVehiclesQuery, ErrorOr<List<VehicleResult>>>
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IMapper _mapper;
@@ -18,11 +18,11 @@ namespace Rento.Application.Vehicles.Queries.GetAllVehicles
             _mapper = mapper;
         }
 
-        public async Task<ErrorOr<List<VehicleResponse>>> Handle(GetAllVehiclesQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<List<VehicleResult>>> Handle(GetAllVehiclesQuery request, CancellationToken cancellationToken)
         {
             var vehicles = await _vehicleRepository.GetAllAsync(cancellationToken);
 
-            var response = _mapper.Map<List<VehicleResponse>>(vehicles);
+            var response = _mapper.Map<List<VehicleResult>>(vehicles);
 
             return response;
         }

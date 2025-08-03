@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using Rento.Api;
 using Rento.Application;
 using Rento.Infrastructure;
@@ -38,4 +39,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "images")),
+    RequestPath = "/images"
+});
 app.Run();

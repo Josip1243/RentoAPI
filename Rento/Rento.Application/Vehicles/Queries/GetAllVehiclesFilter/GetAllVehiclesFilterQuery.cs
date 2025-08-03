@@ -15,5 +15,5 @@ namespace Rento.Application.Vehicles.Queries.GetAllVehiclesFilter
         string? SortDirection,
         int PageNumber,
         int PageSize
-    ) : IRequest<ErrorOr<List<VehicleResponse>>>;
+    ) : IRequest<ErrorOr<FilteredVehicleResult>>;
 }

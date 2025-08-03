@@ -9,7 +9,7 @@
         decimal? MaxPrice,
         string? SortBy,             
         string? SortDirection,
-        int PageNumber = 1,
+        int PageNumber = 0,
         int PageSize = 10
     );
 }

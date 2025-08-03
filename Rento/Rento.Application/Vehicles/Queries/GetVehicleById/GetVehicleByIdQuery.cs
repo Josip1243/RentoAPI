@@ -4,5 +4,5 @@ using Rento.Application.Vehicles.Common;
 
 namespace Rento.Application.Vehicles.Queries.GetVehicleById
 {
-    public record GetVehicleByIdQuery(int Id) : IRequest<ErrorOr<VehicleResponse>>;
+    public record GetVehicleByIdQuery(int Id) : IRequest<ErrorOr<VehicleResult>>;
 }

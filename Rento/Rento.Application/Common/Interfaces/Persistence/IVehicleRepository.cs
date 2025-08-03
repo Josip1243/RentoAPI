@@ -14,5 +14,6 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<bool> ExistsWithRegistrationAsync(string registrationNumber);
         Task<bool> ExistsWithChassisAsync(string chassisNumber);
         Task<List<Vehicle>> GetFilteredAsync(GetAllVehiclesFilterQuery query, CancellationToken cancellationToken);
+        Task<int> GetCount();
     }
 }

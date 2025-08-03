@@ -8,7 +8,7 @@ using Rento.Domain.Entities;
 namespace Rento.Application.Vehicles.Commands.CreateVehicle
 {
     public class CreateVehicleCommandHandler
-    : IRequestHandler<CreateVehicleCommand, ErrorOr<VehicleResponse>>
+    : IRequestHandler<CreateVehicleCommand, ErrorOr<VehicleResult>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace Rento.Application.Vehicles.Commands.CreateVehicle
             _mapper = mapper;
         }
 
-        public async Task<ErrorOr<VehicleResponse>> Handle(CreateVehicleCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<VehicleResult>> Handle(CreateVehicleCommand request, CancellationToken cancellationToken)
         {
             var vehicle = new Vehicle
             {
@@ -38,7 +38,7 @@ namespace Rento.Application.Vehicles.Commands.CreateVehicle
             await _unitOfWork.Vehicles.AddAsync(vehicle, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return _mapper.Map<VehicleResponse>(vehicle);
+            return _mapper.Map<VehicleResult>(vehicle);
         }
     }
 }

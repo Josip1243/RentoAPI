@@ -8,7 +8,7 @@ using Rento.Domain.Common.Errors;
 namespace Rento.Application.Vehicles.Commands.UpdateVehicle
 {
     public class UpdateVehicleCommandHandler
-    : IRequestHandler<UpdateVehicleCommand, ErrorOr<VehicleResponse>>
+    : IRequestHandler<UpdateVehicleCommand, ErrorOr<VehicleResult>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace Rento.Application.Vehicles.Commands.UpdateVehicle
             _mapper = mapper;
         }
 
-        public async Task<ErrorOr<VehicleResponse>> Handle(UpdateVehicleCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<VehicleResult>> Handle(UpdateVehicleCommand request, CancellationToken cancellationToken)
         {
             var vehicle = await _unitOfWork.Vehicles.GetByIdAsync(request.Id, cancellationToken);
 
@@ -41,7 +41,7 @@ namespace Rento.Application.Vehicles.Commands.UpdateVehicle
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return _mapper.Map<VehicleResponse>(vehicle);
+            return _mapper.Map<VehicleResult>(vehicle);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using Rento.Application.Vehicles.Commands.CreateVehicle;
 using Rento.Application.Vehicles.Commands.UpdateVehicle;
+using Rento.Application.Vehicles.Common;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
 using Rento.Contracts.Vehicles;
 
@@ -10,10 +11,13 @@ namespace Rento.Api.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<Application.Vehicles.Common.VehicleResponse, Contracts.Vehicles.VehicleResponse>();
+            config.NewConfig<VehicleResult, VehicleResponse>();
+            config.NewConfig<FilteredVehicleResult, VehicleListResponse>();
+
             config.NewConfig<CreateVehicleRequest, CreateVehicleCommand>();
             config.NewConfig<UpdateVehicleRequest, UpdateVehicleCommand>();
             config.NewConfig<VehicleFilterRequest, GetAllVehiclesFilterQuery>();
+
 
         }
     }

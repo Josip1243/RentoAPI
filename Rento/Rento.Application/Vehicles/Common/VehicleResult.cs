@@ -1,11 +1,6 @@
-﻿namespace Rento.Contracts.Vehicles
+﻿namespace Rento.Application.Vehicles.Common
 {
-    public record VehicleListResponse(
-        List<VehicleResponse> Vehicles,
-        int TotalCount
-    );
-
-    public record VehicleResponse(
+    public record VehicleResult(
         int Id,
         string Brand,
         string Model,

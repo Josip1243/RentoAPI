@@ -50,7 +50,7 @@ namespace Rento.Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
 
             return result.Match(
-                vehicles => Ok(_mapper.Map<List<VehicleResponse>>(vehicles)),
+                vehicles => Ok(_mapper.Map<VehicleListResponse>(vehicles)),
                 errors => Problem(errors)
             );
         }

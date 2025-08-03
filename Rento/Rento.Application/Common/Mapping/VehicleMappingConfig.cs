@@ -9,7 +9,8 @@ namespace Rento.Application.Common.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<Vehicle, VehicleResponse>();
+            config.NewConfig<Vehicle, VehicleResult>()
+                .Map(dest => dest.ImageUrls, src => src.Images.Select(img => img.Url).ToList());
         }
     }
 }

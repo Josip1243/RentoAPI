@@ -16,5 +16,5 @@ namespace Rento.Application.Vehicles.Commands.UpdateVehicle
         int SeatsNumber,
         decimal Price,
         int OwnerId
-    ) : IRequest<ErrorOr<VehicleResponse>>;
+    ) : IRequest<ErrorOr<VehicleResult>>;
 }
