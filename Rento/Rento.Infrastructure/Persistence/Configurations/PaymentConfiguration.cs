@@ -17,6 +17,10 @@ namespace Rento.Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.Property(p => p.PaymentDate)
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
                 .IsRequired();
 
             builder.Property(p => p.PaymentMethod)

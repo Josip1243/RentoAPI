@@ -29,7 +29,11 @@ namespace Rento.Infrastructure.Persistence.Configurations
 
             builder.Property(u => u.Verified).IsRequired();
             builder.Property(u => u.CreatedAt)
-                   .HasDefaultValueSql("GETUTCDATE()");
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
+                .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }

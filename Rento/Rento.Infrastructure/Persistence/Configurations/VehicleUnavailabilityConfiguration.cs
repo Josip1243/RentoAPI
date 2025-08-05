@@ -13,9 +13,17 @@ namespace Rento.Infrastructure.Persistence.Configurations
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.StartDate)
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
                 .IsRequired();
 
             builder.Property(u => u.EndDate)
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
                 .IsRequired();
 
             builder.Property(u => u.Reason)

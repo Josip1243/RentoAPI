@@ -34,7 +34,7 @@ namespace Rento.Application.Reservations.Commands.CreateReservation
                 ReservationDate = DateTime.UtcNow,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
-                Status = ReservationStatus.Pending,
+                Status = ReservationStatus.Confirmed,
                 CreatedAt = DateTime.UtcNow
             };
 

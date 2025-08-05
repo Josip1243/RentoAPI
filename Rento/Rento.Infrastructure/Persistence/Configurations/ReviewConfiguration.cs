@@ -19,6 +19,10 @@ namespace Rento.Infrastructure.Persistence.Configurations
                 .HasMaxLength(1000);
 
             builder.Property(r => r.CreatedAt)
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
                 .IsRequired();
 
             builder.HasOne(r => r.Reservation)

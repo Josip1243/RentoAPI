@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rento.Application.Common.Interfaces.Persistence;
+using Rento.Application.Vehicles.Common;
+using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
 using Rento.Domain.Entities;
@@ -115,5 +117,70 @@ namespace Rento.Infrastructure.Persistence.Repositories
         {
             return await _context.Vehicles.CountAsync();
         }
+
+        public async Task<FilteredVehicleResult> GetAllForOwnerAsync(
+    GetAllOwnerVehiclesQuery query,
+    CancellationToken cancellationToken = default)
+        {
+            var vehiclesQuery = _context.Vehicles
+                .Include(v => v.Images)
+                .Where(v => v.OwnerId == query.OwnerId)
+                .AsQueryable();
+
+            // Filteri
+            if (!string.IsNullOrWhiteSpace(query.FuelType))
+                vehiclesQuery = vehiclesQuery.Where(v => v.FuelType.ToLower() == query.FuelType.ToLower());
+
+            if (query.MinYear.HasValue)
+                vehiclesQuery = vehiclesQuery.Where(v => v.Year >= query.MinYear);
+
+            if (query.MaxYear.HasValue)
+                vehiclesQuery = vehiclesQuery.Where(v => v.Year <= query.MaxYear);
+
+            if (query.MinPrice.HasValue)
+                vehiclesQuery = vehiclesQuery.Where(v => v.Price >= query.MinPrice);
+
+            if (query.MaxPrice.HasValue)
+                vehiclesQuery = vehiclesQuery.Where(v => v.Price <= query.MaxPrice);
+
+            // Sortiranje
+            var isDesc = string.Equals(query.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+
+            vehiclesQuery = query.SortBy?.ToLower() switch
+            {
+                "brand" => isDesc ? vehiclesQuery.OrderByDescending(v => v.Brand) : vehiclesQuery.OrderBy(v => v.Brand),
+                "model" => isDesc ? vehiclesQuery.OrderByDescending(v => v.Model) : vehiclesQuery.OrderBy(v => v.Model),
+                "price" => isDesc ? vehiclesQuery.OrderByDescending(v => v.Price) : vehiclesQuery.OrderBy(v => v.Price),
+                "year" => isDesc ? vehiclesQuery.OrderByDescending(v => v.Year) : vehiclesQuery.OrderBy(v => v.Year),
+                _ => vehiclesQuery.OrderBy(v => v.Id)
+            };
+
+            var totalCount = await vehiclesQuery.CountAsync(cancellationToken);
+
+            var vehicles = await vehiclesQuery
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(v => new VehicleResult(
+                    v.Id,
+                    v.Brand,
+                    v.Model,
+                    v.Year,
+                    v.RegistrationNumber,
+                    v.ChassisNumber,
+                    v.FuelType,
+                    v.DoorsNumber,
+                    v.SeatsNumber,
+                    v.Price,
+                    v.OwnerId,
+                    v.Images
+                        .OrderBy(img => img.Order)
+                        .Select(img => img.ImageUrl)
+                        .ToList()
+                ))
+                .ToListAsync(cancellationToken);
+
+            return new FilteredVehicleResult(vehicles, totalCount);
+        }
+
     }
 }

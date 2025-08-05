@@ -13,7 +13,7 @@ namespace Rento.Application.Reservations.Commands.CreateReservation
                 .GreaterThanOrEqualTo(DateTime.UtcNow.Date);
 
             RuleFor(x => x.EndDate)
-                .GreaterThan(x => x.StartDate);
+                .GreaterThanOrEqualTo(x => x.StartDate);
         }
     }
 }

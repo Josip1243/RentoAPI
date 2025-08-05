@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Rento.Application.Vehicles.Commands.CreateVehicle;
 using Rento.Application.Vehicles.Commands.DeleteVehicle;
 using Rento.Application.Vehicles.Commands.UpdateVehicle;
+using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
 using Rento.Application.Vehicles.Queries.GetReservedDatesById;
 using Rento.Application.Vehicles.Queries.GetVehicleById;
 using Rento.Contracts.Reservations;
 using Rento.Contracts.Vehicles;
+using System.Security.Claims;
 
 namespace Rento.Api.Controllers
 {
@@ -121,6 +123,25 @@ namespace Rento.Api.Controllers
 
             return result.Match(
                 dates => Ok(_mapper.Map<List<ReservationDateRangeResponse>>(dates)),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyVehicles([FromQuery] VehicleFilterRequest request)
+        {
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var query = _mapper.Map<GetAllOwnerVehiclesQuery>(request) with { OwnerId = userId };
+
+            var result = await _mediator.Send(query);
+
+            return result.Match(
+                value => Ok(value),
                 errors => Problem(errors)
             );
         }

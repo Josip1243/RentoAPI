@@ -14,6 +14,7 @@ builder.Services
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
+builder.Services.AddHttpContextAccessor();
 
 //builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

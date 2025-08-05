@@ -1,4 +1,6 @@
-﻿using Rento.Application.Vehicles.Queries.GetAllVehicles;
+﻿using Rento.Application.Vehicles.Common;
+using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
+using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
 using Rento.Domain.Entities;
 
@@ -15,5 +17,7 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<bool> ExistsWithChassisAsync(string chassisNumber);
         Task<List<Vehicle>> GetFilteredAsync(GetAllVehiclesFilterQuery query, CancellationToken cancellationToken);
         Task<int> GetCount();
+        Task<FilteredVehicleResult> GetAllForOwnerAsync(GetAllOwnerVehiclesQuery query, CancellationToken cancellationToken = default);
+
     }
 }

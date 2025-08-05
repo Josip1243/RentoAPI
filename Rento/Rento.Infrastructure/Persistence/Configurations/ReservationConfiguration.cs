@@ -12,11 +12,34 @@ namespace Rento.Infrastructure.Persistence.Configurations
 
             builder.HasKey(r => r.Id);
 
-            builder.Property(r => r.ReservationDate).IsRequired();
-            builder.Property(r => r.StartDate).IsRequired();
-            builder.Property(r => r.EndDate).IsRequired();
+            builder.Property(r => r.ReservationDate)
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
+                .IsRequired();
+
+            builder.Property(r => r.StartDate)
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
+                .IsRequired();
+
+            builder.Property(r => r.EndDate)
+                .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
+                .IsRequired();
+
             builder.Property(r => r.Status).IsRequired();
-            builder.Property(r => r.CreatedAt).IsRequired();
+            builder.Property(r => r.CreatedAt)
+                 .HasConversion(
+                    v => v, // DateTime to DateTime conversion
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // ensure UTC kind for consistency
+                )
+                 .IsRequired();
 
             builder.HasOne(r => r.User)
                 .WithMany()
