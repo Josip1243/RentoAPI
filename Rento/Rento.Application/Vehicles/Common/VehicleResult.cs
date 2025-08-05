@@ -12,6 +12,6 @@
         int SeatsNumber,
         decimal Price,
         int OwnerId,
-        List<string> ImageUrls
+        List<VehicleImageResult> Images
     );
 }

@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rento.Application.Vehicles.Commands.CreateVehicle;
 using Rento.Application.Vehicles.Commands.DeleteVehicle;
+using Rento.Application.Vehicles.Commands.DeleteVehicleImage;
 using Rento.Application.Vehicles.Commands.UpdateVehicle;
+using Rento.Application.Vehicles.Commands.UpdateVehicleImageOrder;
+using Rento.Application.Vehicles.Commands.UploadVehicleImage;
 using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
@@ -73,7 +76,13 @@ namespace Rento.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateVehicleRequest request, CancellationToken cancellationToken)
         {
-            var command = _mapper.Map<CreateVehicleCommand>(request);
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var command = _mapper.Map<CreateVehicleCommand>(request) with { OwnerId = userId };
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -92,7 +101,13 @@ namespace Rento.Api.Controllers
                 return BadRequest("ID u ruti i tijelu zahtjeva moraju biti isti.");
             }
 
-            var command = _mapper.Map<UpdateVehicleCommand>(request);
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var command = _mapper.Map<UpdateVehicleCommand>(request) with { OwnerId = userId };
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -142,6 +157,67 @@ namespace Rento.Api.Controllers
 
             return result.Match(
                 value => Ok(value),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpPatch("{vehicleId:int}/images/order")]
+        public async Task<IActionResult> UpdateImageOrder(int vehicleId, [FromBody] UpdateVehicleImageOrderRequest request)
+        {
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var command = new UpdateVehicleImageOrderCommand(
+                vehicleId,
+                userId,
+                _mapper.Map<List<Application.Vehicles.Commands.UpdateVehicleImageOrder.ImageOrderDto>>(request.Images)
+            );
+
+            var result = await _mediator.Send(command);
+
+            return result.Match(
+                _ => NoContent(),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpPost("{vehicleId:int}/images")]
+        public async Task<IActionResult> UploadImages(
+            int vehicleId,
+            [FromForm] List<IFormFile> images)
+        {
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var command = new UploadVehicleImagesCommand(vehicleId, userId, images);
+            var result = await _mediator.Send(command);
+
+            return result.Match(
+                _ => NoContent(),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpDelete("{vehicleId:int}/images/{imageId:int}")]
+        public async Task<IActionResult> DeleteImage(int vehicleId, int imageId)
+        {
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var command = new DeleteVehicleImageCommand(vehicleId, imageId, userId);
+            var result = await _mediator.Send(command);
+
+            return result.Match(
+                _ => NoContent(),
                 errors => Problem(errors)
             );
         }

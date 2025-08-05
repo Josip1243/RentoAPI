@@ -7,7 +7,7 @@
         public string Name { get; set; } = default!;
         public string Url { get; set; } = default!;
         public string? Description { get; set; }
-
+        public int Order { get; set; }
         public Vehicle Vehicle { get; set; } = default!;
     }
 }

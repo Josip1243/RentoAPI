@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Rento.Application.Common.Interfaces;
 using Rento.Application.Common.Interfaces.Authentication;
 using Rento.Application.Common.Interfaces.Persistence;
 using Rento.Infrastructure.Authentication;
@@ -35,7 +36,8 @@ namespace Rento.Infrastructure
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
-
+            services.AddScoped<IImageStorageService, ImageStorageService>();
+            services.AddScoped<IVehicleImageRepository, VehicleImageRepository>();
 
             return services;
         }

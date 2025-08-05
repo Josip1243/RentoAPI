@@ -9,7 +9,6 @@
         string FuelType,
         int DoorsNumber,
         int SeatsNumber,
-        decimal Price,
-        int OwnerId
+        decimal Price
     );
 }

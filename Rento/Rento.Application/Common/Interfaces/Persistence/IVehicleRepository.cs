@@ -13,11 +13,13 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
         Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default);
         void Remove(Vehicle vehicle);
-        Task<bool> ExistsWithRegistrationAsync(string registrationNumber);
+        Task<bool> ExistsWithRegistrationAsync(string registrationNumber, int? excludeVehicleId = null);
         Task<bool> ExistsWithChassisAsync(string chassisNumber);
+        Task<bool> ExistsWithChassisAsync(string chassisNumber, int? excludeVehicleId = null);
         Task<List<Vehicle>> GetFilteredAsync(GetAllVehiclesFilterQuery query, CancellationToken cancellationToken);
         Task<int> GetCount();
         Task<FilteredVehicleResult> GetAllForOwnerAsync(GetAllOwnerVehiclesQuery query, CancellationToken cancellationToken = default);
+        Task<Vehicle?> GetByIdWithImagesAsync(int vehicleId, CancellationToken cancellationToken = default);
 
     }
 }

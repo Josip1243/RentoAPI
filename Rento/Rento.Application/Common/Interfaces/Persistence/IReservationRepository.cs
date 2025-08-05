@@ -13,6 +13,7 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<ReservationDetailsResult?> GetReservationDetailsByIdAsync(int reservationId, CancellationToken cancellationToken = default);
         Task<List<OwnerReservationResult>> GetReservationsForOwnerAsync(int ownerId, CancellationToken cancellationToken = default);
         Task<Reservation?> GetReservationWithVehicleAsync(int reservationId, CancellationToken cancellationToken = default);
+        Task<bool> AnyForVehicleAsync(int vehicleId, CancellationToken cancellationToken = default);
 
     }
 }

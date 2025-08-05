@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Rento.Application.Common.Interfaces.Persistence;
 using Rento.Application.Vehicles.Common;
 using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
@@ -11,10 +12,12 @@ namespace Rento.Infrastructure.Persistence.Repositories
     public class VehicleRepository : IVehicleRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public VehicleRepository(ApplicationDbContext context)
+        public VehicleRepository(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<Vehicle?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -31,7 +34,7 @@ namespace Rento.Infrastructure.Persistence.Repositories
         public async Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Vehicles
-                .Include(v => v.Images)
+                .Include(v => v.Images.OrderBy(img => img.Order))
                 .ToListAsync(cancellationToken);
         }
 
@@ -45,14 +48,23 @@ namespace Rento.Infrastructure.Persistence.Repositories
             _context.Vehicles.Remove(vehicle);
         }
 
-        public async Task<bool> ExistsWithRegistrationAsync(string registrationNumber)
+        public async Task<bool> ExistsWithRegistrationAsync(string registrationNumber, int? excludeVehicleId = null)
         {
-            return await _context.Vehicles.AnyAsync(v => v.RegistrationNumber == registrationNumber);
+            return await _context.Vehicles.AnyAsync(v => v.RegistrationNumber == registrationNumber &&
+                (!excludeVehicleId.HasValue || v.Id != excludeVehicleId.Value));
         }
 
         public async Task<bool> ExistsWithChassisAsync(string chassisNumber)
         {
             return await _context.Vehicles.AnyAsync(v => v.ChassisNumber == chassisNumber);
+        }
+
+        public async Task<bool> ExistsWithChassisAsync(string chassisNumber, int? excludeVehicleId = null)
+        {
+            return await _context.Vehicles
+                .AnyAsync(v =>
+                    v.ChassisNumber == chassisNumber &&
+                    (!excludeVehicleId.HasValue || v.Id != excludeVehicleId.Value));
         }
 
         public async Task<List<Vehicle>> GetFilteredAsync(GetAllVehiclesFilterQuery request, CancellationToken cancellationToken)
@@ -119,8 +131,8 @@ namespace Rento.Infrastructure.Persistence.Repositories
         }
 
         public async Task<FilteredVehicleResult> GetAllForOwnerAsync(
-    GetAllOwnerVehiclesQuery query,
-    CancellationToken cancellationToken = default)
+            GetAllOwnerVehiclesQuery query,
+            CancellationToken cancellationToken = default)
         {
             var vehiclesQuery = _context.Vehicles
                 .Include(v => v.Images)
@@ -158,28 +170,19 @@ namespace Rento.Infrastructure.Persistence.Repositories
             var totalCount = await vehiclesQuery.CountAsync(cancellationToken);
 
             var vehicles = await vehiclesQuery
-                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Skip((query.PageNumber) * query.PageSize)
                 .Take(query.PageSize)
-                .Select(v => new VehicleResult(
-                    v.Id,
-                    v.Brand,
-                    v.Model,
-                    v.Year,
-                    v.RegistrationNumber,
-                    v.ChassisNumber,
-                    v.FuelType,
-                    v.DoorsNumber,
-                    v.SeatsNumber,
-                    v.Price,
-                    v.OwnerId,
-                    v.Images
-                        .OrderBy(img => img.Order)
-                        .Select(img => img.ImageUrl)
-                        .ToList()
-                ))
+                .Select(v => _mapper.Map<VehicleResult>(v))
                 .ToListAsync(cancellationToken);
 
             return new FilteredVehicleResult(vehicles, totalCount);
+        }
+
+        public async Task<Vehicle?> GetByIdWithImagesAsync(int vehicleId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Vehicles
+                .Include(v => v.Images)
+                .FirstOrDefaultAsync(v => v.Id == vehicleId, cancellationToken);
         }
 
     }

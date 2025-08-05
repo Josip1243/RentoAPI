@@ -14,14 +14,14 @@ namespace Rento.Application.Vehicles.Commands.UpdateVehicle
             RuleFor(x => x.RegistrationNumber)
                 .NotEmpty()
                 .MaximumLength(20)
-                .MustAsync(async (reg, ct) =>
-                    !(await vehicleRepository.ExistsWithRegistrationAsync(reg)))
+                .MustAsync(async (cmd, reg, ct) =>
+                    !(await vehicleRepository.ExistsWithRegistrationAsync(reg, cmd.Id)))
                 .WithMessage("Vehicle with that registration already exists.");
             RuleFor(x => x.ChassisNumber)
                 .NotEmpty()
                 .MaximumLength(50)
-                .MustAsync(async (chas, ct) =>
-                    !(await vehicleRepository.ExistsWithChassisAsync(chas)))
+                .MustAsync(async (cmd, chas, ct) =>
+                    !(await vehicleRepository.ExistsWithChassisAsync(chas, cmd.Id)))
                 .WithMessage("Chassis number already exists.");
             RuleFor(x => x.FuelType).NotEmpty().MaximumLength(50);
             RuleFor(x => x.DoorsNumber).InclusiveBetween(2, 6);

@@ -15,14 +15,15 @@ namespace Rento.Api.Mapping
             config.NewConfig<VehicleResult, VehicleResponse>();
             config.NewConfig<FilteredVehicleResult, VehicleListResponse>();
 
-            config.NewConfig<CreateVehicleRequest, CreateVehicleCommand>();
-            config.NewConfig<UpdateVehicleRequest, UpdateVehicleCommand>();
+            config.NewConfig<CreateVehicleRequest, CreateVehicleCommand>().MapToConstructor(true);
+            config.NewConfig<UpdateVehicleRequest, UpdateVehicleCommand>().MapToConstructor(true);
             config.NewConfig<VehicleFilterRequest, GetAllVehiclesFilterQuery>();
 
             config.NewConfig<VehicleFilterRequest, GetAllOwnerVehiclesQuery>()
                 .MapToConstructor(true)
                 .Map(dest => dest.OwnerId, _ => default(int));
 
-                    }
+            config.NewConfig<Rento.Contracts.Vehicles.ImageOrderDto, Rento.Application.Vehicles.Commands.UpdateVehicleImageOrder.ImageOrderDto>();
+        }
     }
 }

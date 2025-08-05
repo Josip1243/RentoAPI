@@ -5,6 +5,11 @@
         int TotalCount
     );
 
+    public record VehicleImageDto(
+        int Id,
+        int Order,
+        string Url);
+
     public record VehicleResponse(
         int Id,
         string Brand,
@@ -17,6 +22,6 @@
         int SeatsNumber,
         decimal Price,
         int OwnerId,
-        List<string> ImageUrls
+        List<VehicleImageDto> Images
     );
 }

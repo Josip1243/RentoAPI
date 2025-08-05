@@ -102,5 +102,11 @@ namespace Rento.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(r => r.Id == reservationId, cancellationToken);
         }
 
+        public async Task<bool> AnyForVehicleAsync(int vehicleId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Reservations
+                .AnyAsync(r => r.VehicleId == vehicleId, cancellationToken);
+        }
+
     }
 }

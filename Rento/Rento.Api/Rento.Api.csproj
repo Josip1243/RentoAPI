@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>949adcea-696a-4f02-b002-c1c042e13fbc</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<WebRoot>wwwroot</WebRoot>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -28,7 +29,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include=".\images\" />
+	  <None Include="wwwroot\images\vehicles\pexels-albinberlin-919073.jpg" />
+	  <None Include="wwwroot\images\vehicles\pexels-mikebirdy-170811.jpg" />
+	  <None Include="wwwroot\images\vehicles\pexels-pixabay-210019.jpg" />
 	</ItemGroup>
 
 </Project>
