@@ -25,11 +25,6 @@ namespace Rento.Infrastructure.Persistence.Configurations
                 )
                 .IsRequired();
 
-            builder.HasOne(r => r.Reservation)
-                .WithMany()
-                .HasForeignKey(r => r.ReservationId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(r => r.Reviewer)
                 .WithMany()
                 .HasForeignKey(r => r.ReviewerId)

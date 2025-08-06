@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rento.Application.Common.Interfaces.Persistence;
 using Rento.Application.Reservations.Common;
+using Rento.Application.Vehicles.Common;
 using Rento.Domain.Entities;
+using Rento.Domain.Enums;
 
 namespace Rento.Infrastructure.Persistence.Repositories
 {
@@ -108,5 +110,35 @@ namespace Rento.Infrastructure.Persistence.Repositories
                 .AnyAsync(r => r.VehicleId == vehicleId, cancellationToken);
         }
 
+        public async Task<bool> HasCompletedReservation(int userId, int vehicleId)
+        {
+            return await _context.Reservations
+                .AnyAsync(r =>
+                    r.UserId == userId &&
+                    r.VehicleId == vehicleId &&
+                    r.Status == ReservationStatus.Completed);
+        }
+
+        public async Task<List<Reservation>> GetAllWithUserAndVehicleAsync()
+        {
+            return await _context.Reservations
+                .Include(r => r.Vehicle)
+                .Include(r => r.User)
+                .ToListAsync();
+        }
+
+        public async Task<List<BusyDateRangeDto>> GetBusyDateRangesForVehicleAsync(int vehicleId, DateTime fromDate)
+        {
+            return await _context.Reservations
+                .Where(r => r.VehicleId == vehicleId &&
+                            (r.Status == ReservationStatus.Active || r.Status == ReservationStatus.Confirmed) &&
+                            r.EndDate >= fromDate)
+                .Select(r => new BusyDateRangeDto
+                {
+                    StartDate = r.StartDate,
+                    EndDate = r.EndDate
+                })
+                .ToListAsync();
+                }
     }
 }

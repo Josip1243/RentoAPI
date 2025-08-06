@@ -10,6 +10,7 @@ using Rento.Application.Common.Interfaces.Persistence;
 using Rento.Infrastructure.Authentication;
 using Rento.Infrastructure.Persistence;
 using Rento.Infrastructure.Persistence.Repositories;
+using Rento.Infrastructure.Services;
 using System.Text;
 
 namespace Rento.Infrastructure
@@ -38,6 +39,7 @@ namespace Rento.Infrastructure
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IImageStorageService, ImageStorageService>();
             services.AddScoped<IVehicleImageRepository, VehicleImageRepository>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             return services;
         }

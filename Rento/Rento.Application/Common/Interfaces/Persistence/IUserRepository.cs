@@ -8,5 +8,8 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<bool> ExistsByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<User?> GetByEmailAsync(string email, CancellationToken ct = default);
         void Add(User user);
+        Task<User?> GetByIdAsync(int id);
+        Task<List<User>> GetAllAsync();
+        void Delete(User user);
     }
 }

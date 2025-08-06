@@ -24,5 +24,20 @@ namespace Rento.Infrastructure.Persistence.Repositories
             await _context.Users.SingleOrDefaultAsync(u => u.Email == email, ct);
 
         public void Add(User user) => _context.Users.Add(user);
+
+        public async Task<User?> GetByIdAsync(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<List<User>> GetAllAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        public void Delete(User user)
+        {
+            _context.Users.Remove(user);
+        }
     }
 }

@@ -20,8 +20,8 @@ namespace Rento.Application.Reviews.Commands.DeleteReview
             if (review is null)
                 return Error.NotFound(description: "Recenzija nije pronađena.");
 
-            if (review.ReviewerId != request.UserId)
-                return Error.Forbidden(description: "Niste ovlašteni obrisati ovu recenziju.");
+            //if (review.ReviewerId != request.UserId)
+            //    return Error.Forbidden(description: "Niste ovlašteni obrisati ovu recenziju.");
 
             await _reviewRepository.DeleteAsync(review, cancellationToken);
 

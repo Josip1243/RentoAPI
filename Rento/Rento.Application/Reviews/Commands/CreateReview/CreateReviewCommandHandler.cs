@@ -1,61 +1,62 @@
 ﻿using ErrorOr;
-using MapsterMapper;
 using MediatR;
 using Rento.Application.Common.Interfaces.Persistence;
-using Rento.Application.Reviews.Common;
-using Rento.Domain.Common.Errors;
 using Rento.Domain.Entities;
-using Rento.Domain.Enums;
 
 namespace Rento.Application.Reviews.Commands.CreateReview
 {
-    public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, ErrorOr<ReviewResult>>
+    public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, ErrorOr<Success>>
     {
         private readonly IReservationRepository _reservationRepository;
         private readonly IReviewRepository _reviewRepository;
-        private readonly IMapper _mapper;
+        private readonly IVehicleRepository _vehicleRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateReviewCommandHandler(
             IReservationRepository reservationRepository,
             IReviewRepository reviewRepository,
-            IMapper mapper)
+            IVehicleRepository vehicleRepository,
+            IUnitOfWork unitOfWork)
         {
             _reservationRepository = reservationRepository;
             _reviewRepository = reviewRepository;
-            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _vehicleRepository = vehicleRepository;
         }
 
-        public async Task<ErrorOr<ReviewResult>> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<Success>> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
         {
-            var reservation = await _reservationRepository.GetByIdAsync(request.ReservationId, cancellationToken);
+            // Nađi završenu rezervaciju za tog korisnika i to vozilo
+            var reservation = await _reservationRepository.HasCompletedReservation(request.ReviewerId, request.VehicleId);
 
-            if (reservation is null)
-                return Errors.Review.ReviewNotFound;
+            if (reservation is false)
+            {
+                return Error.Validation("Review.NotAllowed", "Nemate završenu rezervaciju za ovo vozilo.");
+            }
 
-            if (reservation.Status != ReservationStatus.Completed)
-                return Errors.Review.ReservationNotCompleted;
+            var vehicle = await _vehicleRepository.GetByIdAsync(request.VehicleId, cancellationToken);
 
-            if (reservation.UserId != request.ReviewerId)
-                return Errors.Review.NotOwner;
-
-            var existingReview = await _reviewRepository.GetByReservationIdAsync(request.ReservationId, cancellationToken);
-            if (existingReview is not null)
-                return Errors.Review.ReviewAlreadyExists;
+            if (vehicle is null)
+            {
+                return Error.NotFound("Vehicle.NotFound", "Vozilo nije pronađeno.");
+            }
 
             var review = new Review
             {
-                ReservationId = reservation.Id,
                 ReviewerId = request.ReviewerId,
-                VehicleId = reservation.VehicleId,
-                OwnerId = reservation.Vehicle.OwnerId,
+                VehicleId = request.VehicleId,
+                OwnerId = vehicle.OwnerId,
                 Rating = request.Rating,
                 Comment = request.Comment,
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _reviewRepository.AddAsync(review, cancellationToken);
+            await _reviewRepository.AddAsync(review);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return _mapper.Map<ReviewResult>(review);
+            return Result.Success;
         }
     }
+
+
 }

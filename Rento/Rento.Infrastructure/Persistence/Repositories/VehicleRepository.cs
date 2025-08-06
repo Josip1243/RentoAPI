@@ -185,5 +185,59 @@ namespace Rento.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(v => v.Id == vehicleId, cancellationToken);
         }
 
+        public async Task<List<Vehicle>> GetAllWithOwnerAsync()
+        {
+            return await _context.Vehicles
+                .Include(v => v.Owner)
+                .ToListAsync();
+        }
+
+        public async Task<List<VehicleUnavailability>> GetUnavailabilityAsync(int vehicleId)
+        {
+            return await _context.VehicleUnavailabilities
+                .Where(v => v.VehicleId == vehicleId)
+                .ToListAsync();
+        }
+
+        public async Task<List<BusyDateRangeDto>> GetUnavailableDateRangesAsync(int vehicleId, DateTime fromDate)
+        {
+            return await _context.VehicleUnavailabilities
+                .Where(u => u.VehicleId == vehicleId && u.EndDate >= fromDate)
+                .Select(u => new BusyDateRangeDto
+                {
+                    StartDate = DateTime.SpecifyKind(u.StartDate, DateTimeKind.Utc),
+                    EndDate = DateTime.SpecifyKind(u.EndDate, DateTimeKind.Utc)
+                })
+                .ToListAsync();
+        }
+
+        public void AddUnavailability(VehicleUnavailability entity)
+        {
+            _context.VehicleUnavailabilities.Add(entity);
+        }
+
+        public async Task<List<VehicleUnavailabilityDto>> GetUnavailabilityListAsync(int vehicleId, DateTime fromDate)
+        {
+            return await _context.VehicleUnavailabilities
+                .Where(x => x.VehicleId == vehicleId && x.EndDate >= fromDate)
+                .Select(x => new VehicleUnavailabilityDto
+                {
+                    Id = x.Id,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+                    Reason = x.Reason
+                })
+                .ToListAsync();
+        }
+
+        public async Task<VehicleUnavailability?> GetUnavailabilityByIdAsync(int unavailabilityId)
+        {
+            return await _context.VehicleUnavailabilities.FindAsync(unavailabilityId);
+        }
+
+        public void RemoveUnavailability(VehicleUnavailability entity)
+        {
+            _context.VehicleUnavailabilities.Remove(entity);
+        }
     }
 }

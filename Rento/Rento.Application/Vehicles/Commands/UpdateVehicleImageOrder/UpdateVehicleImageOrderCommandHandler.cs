@@ -1,5 +1,6 @@
 ﻿using ErrorOr;
 using MediatR;
+using Rento.Application.Common.Interfaces;
 using Rento.Application.Common.Interfaces.Persistence;
 
 namespace Rento.Application.Vehicles.Commands.UpdateVehicleImageOrder
@@ -8,10 +9,12 @@ namespace Rento.Application.Vehicles.Commands.UpdateVehicleImageOrder
     : IRequestHandler<UpdateVehicleImageOrderCommand, ErrorOr<Success>>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserService _currentUserService;
 
-        public UpdateVehicleImageOrderCommandHandler(IUnitOfWork unitOfWork)
+        public UpdateVehicleImageOrderCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             _unitOfWork = unitOfWork;
+            _currentUserService = currentUserService;
         }
 
         public async Task<ErrorOr<Success>> Handle(UpdateVehicleImageOrderCommand request, CancellationToken cancellationToken)
@@ -21,7 +24,7 @@ namespace Rento.Application.Vehicles.Commands.UpdateVehicleImageOrder
             if (vehicle is null)
                 return Error.NotFound("Vehicle.NotFound", "Vozilo nije pronađeno.");
 
-            if (vehicle.OwnerId != request.UserId)
+            if (vehicle.OwnerId != request.UserId && _currentUserService.Role != "Admin")
                 return Error.Forbidden("Vehicle.Forbidden", "Nemate pristup ovom vozilu.");
 
             foreach (var image in vehicle.Images)

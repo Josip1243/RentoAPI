@@ -28,8 +28,8 @@ namespace Rento.Application.Vehicles.Commands.UploadVehicleImage
             if (vehicle is null)
                 return Error.NotFound("Vehicle.NotFound", "Vozilo nije pronađeno.");
 
-            if (vehicle.OwnerId != request.OwnerId)
-                return Error.Forbidden("Vehicle.Forbidden", "Nemate pristup ovom vozilu.");
+            //if (vehicle.OwnerId != request.OwnerId)
+            //    return Error.Forbidden("Vehicle.Forbidden", "Nemate pristup ovom vozilu.");
 
             int startingOrder = vehicle.Images.Any()
                 ? vehicle.Images.Max(i => i.Order) + 1

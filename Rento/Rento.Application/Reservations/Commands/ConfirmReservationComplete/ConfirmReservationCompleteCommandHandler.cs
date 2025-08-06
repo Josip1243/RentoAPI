@@ -25,10 +25,10 @@ namespace Rento.Application.Reservations.Commands.ConfirmReservationComplete
                 return Error.NotFound("Reservation.NotFound", "Reservation not found.");
             }
 
-            if (reservation.Vehicle.OwnerId != request.CurrentUserId)
-            {
-                return Error.Forbidden("Reservation.Forbidden", "You cannot edit this reservation.");
-            }
+            //if (reservation.Vehicle.OwnerId != request.CurrentUserId)
+            //{
+            //    return Error.Forbidden("Reservation.Forbidden", "You cannot edit this reservation.");
+            //}
 
             var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
             var endDate = DateOnly.FromDateTime(reservation.EndDate.Date);

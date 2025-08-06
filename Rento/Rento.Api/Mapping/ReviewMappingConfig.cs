@@ -12,6 +12,7 @@ namespace Rento.Api.Mapping
         {
             config.NewConfig<Review, ReviewResponse>();
             config.NewConfig<ReviewResult, ReviewResponse>();
+
             config.NewConfig<CreateReviewRequest, CreateReviewCommand>();
         }
     }

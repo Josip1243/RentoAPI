@@ -20,6 +20,12 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<int> GetCount();
         Task<FilteredVehicleResult> GetAllForOwnerAsync(GetAllOwnerVehiclesQuery query, CancellationToken cancellationToken = default);
         Task<Vehicle?> GetByIdWithImagesAsync(int vehicleId, CancellationToken cancellationToken = default);
-
+        Task<List<Vehicle>> GetAllWithOwnerAsync();
+        Task<List<VehicleUnavailability>> GetUnavailabilityAsync(int vehicleId);
+        Task<List<BusyDateRangeDto>> GetUnavailableDateRangesAsync(int vehicleId, DateTime fromDate);
+        void AddUnavailability(VehicleUnavailability entity);
+        Task<List<VehicleUnavailabilityDto>> GetUnavailabilityListAsync(int vehicleId, DateTime fromDate);
+        Task<VehicleUnavailability?> GetUnavailabilityByIdAsync(int unavailabilityId);
+        void RemoveUnavailability(VehicleUnavailability entity);
     }
 }

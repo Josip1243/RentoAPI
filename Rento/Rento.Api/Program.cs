@@ -1,4 +1,3 @@
-using Microsoft.Extensions.FileProviders;
 using Rento.Api;
 using Rento.Application;
 using Rento.Infrastructure;
@@ -15,6 +14,7 @@ builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddHttpContextAccessor();
+
 
 //builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

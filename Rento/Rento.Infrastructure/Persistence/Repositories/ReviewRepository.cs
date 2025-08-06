@@ -13,12 +13,6 @@ namespace Rento.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<Review?> GetByReservationIdAsync(int reservationId, CancellationToken cancellationToken = default)
-        {
-            return await _context.Reviews
-                .FirstOrDefaultAsync(r => r.ReservationId == reservationId, cancellationToken);
-        }
-
         public async Task AddAsync(Review review, CancellationToken cancellationToken = default)
         {
             await _context.Reviews.AddAsync(review, cancellationToken);
@@ -44,5 +38,21 @@ namespace Rento.Infrastructure.Persistence.Repositories
             await _context.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task<bool> HasUserReviewedVehicle(int reviewerId, int vehicleId)
+        {
+            return await _context.Reviews
+                .AnyAsync(r => r.ReviewerId == reviewerId && r.VehicleId == vehicleId);
+        }
+        public async Task<List<Review>> GetAllWithVehicleAndReviewerAsync()
+        {
+            return await _context.Reviews
+                .Include(r => r.Vehicle)
+                .Include(r => r.Reviewer)
+                .ToListAsync();
+        }
+        public void Delete(Review review)
+        {
+            _context.Reviews.Remove(review);
+        }
     }
 }

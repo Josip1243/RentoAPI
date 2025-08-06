@@ -1,12 +1,12 @@
-﻿using Azure.Core;
-using ErrorOr;
-using MapsterMapper;
+﻿using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Rento.Application.Vehicles.Commands.AddVehicleUnavailability;
 using Rento.Application.Vehicles.Commands.CreateVehicle;
 using Rento.Application.Vehicles.Commands.DeleteVehicle;
 using Rento.Application.Vehicles.Commands.DeleteVehicleImage;
+using Rento.Application.Vehicles.Commands.DeleteVehicleUnavailability;
 using Rento.Application.Vehicles.Commands.UpdateVehicle;
 using Rento.Application.Vehicles.Commands.UpdateVehicleImageOrder;
 using Rento.Application.Vehicles.Commands.UploadVehicleImage;
@@ -14,7 +14,9 @@ using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
 using Rento.Application.Vehicles.Queries.GetReservedDatesById;
+using Rento.Application.Vehicles.Queries.GetVehicleBusyDates;
 using Rento.Application.Vehicles.Queries.GetVehicleById;
+using Rento.Application.Vehicles.Queries.GetVehicleUnavailability;
 using Rento.Contracts.Reservations;
 using Rento.Contracts.Vehicles;
 using System.Security.Claims;
@@ -214,6 +216,63 @@ namespace Rento.Api.Controllers
             }
 
             var command = new DeleteVehicleImageCommand(vehicleId, imageId, userId);
+            var result = await _mediator.Send(command);
+
+            return result.Match(
+                _ => NoContent(),
+                errors => Problem(errors)
+            );
+        }
+
+        // Unavailabilities
+        [HttpGet("{vehicleId:int}/busy-dates")]
+        public async Task<IActionResult> GetBusyDates(int vehicleId)
+        {
+            var query = new GetVehicleBusyDatesQuery(vehicleId);
+            var result = await _mediator.Send(query);
+
+            return result.Match(
+                dates => Ok(dates),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpGet("{vehicleId:int}/unavailability")]
+        public async Task<IActionResult> GetUnavailabilityList(int vehicleId)
+        {
+            var query = new GetVehicleUnavailabilityListQuery(vehicleId);
+            var result = await _mediator.Send(query);
+
+            return result.Match(
+                list => Ok(list),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpPost("{vehicleId:int}/unavailability")]
+        public async Task<IActionResult> AddUnavailability(
+            int vehicleId,
+            [FromBody] AddVehicleUnavailabilityRequest request)
+        {
+            var command = new AddVehicleUnavailabilityCommand(
+                vehicleId,
+                request.StartDate,
+                request.EndDate,
+                request.Reason
+            );
+
+            var result = await _mediator.Send(command);
+
+            return result.Match(
+                _ => NoContent(),
+                errors => Problem(errors)
+            );
+        }
+
+        [HttpDelete("{vehicleId:int}/unavailability/{unavailabilityId:int}")]
+        public async Task<IActionResult> DeleteUnavailability(int vehicleId, int unavailabilityId)
+        {
+            var command = new DeleteVehicleUnavailabilityCommand(vehicleId, unavailabilityId);
             var result = await _mediator.Send(command);
 
             return result.Match(

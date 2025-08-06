@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rento.Application.Reviews.Commands.CreateReview;
 using Rento.Application.Reviews.Commands.DeleteReview;
+using Rento.Application.Reviews.Queries.CanUserReview;
 using Rento.Application.Reviews.Queries.GetVehicleReviews;
+using Rento.Application.Reviews.Queries.HasReviewed;
 using Rento.Contracts.Reviews;
 using System.Security.Claims;
 
@@ -27,7 +29,7 @@ namespace Rento.Api.Controllers
         {
             var reviewerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var command = _mapper.Map<CreateReviewCommand>(request);
+            var command = _mapper.Map<CreateReviewCommand>(request) with { ReviewerId = reviewerId };
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -61,5 +63,27 @@ namespace Rento.Api.Controllers
             );
         }
 
+        [HttpGet("can-review/{vehicleId}")]
+        public async Task<IActionResult> CanReview(int vehicleId)
+        {
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var result = await _mediator.Send(new CanUserReviewQuery(vehicleId, userId));
+            return Ok(result);
+        }
+
+        [HttpGet("user-reviewed/{vehicleId}")]
+        public async Task<IActionResult> HasUserReviewed(int vehicleId)
+        {
+            var reviewerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var result = await _mediator.Send(new HasUserReviewedVehicleQuery(vehicleId, reviewerId));
+
+            return Ok(result);
+        }
     }
 }

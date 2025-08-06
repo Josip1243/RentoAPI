@@ -27,10 +27,10 @@ namespace Rento.Application.Reservations.Commands.ConfirmReservationPickup
                 return Error.NotFound("Reservation.NotFound", "Reservation not found.");
             }
 
-            if (reservation.Vehicle.OwnerId != request.CurrentUserId)
-            {
-                return Error.Forbidden("Reservation.Forbidden", "You cannot edit this reservation.");
-            }
+            //if (reservation.Vehicle.OwnerId != request.CurrentUserId)
+            //{
+            //    return Error.Forbidden("Reservation.Forbidden", "You cannot edit this reservation.");
+            //}
 
             reservation.Status = ReservationStatus.Active;
 

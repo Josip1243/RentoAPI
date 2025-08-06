@@ -179,10 +179,7 @@ namespace Rento.Infrastructure.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReservationId1")
+                    b.Property<int?>("ReservationId")
                         .HasColumnType("int");
 
                     b.Property<int>("ReviewerId")
@@ -196,8 +193,6 @@ namespace Rento.Infrastructure.Migrations
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("ReservationId");
-
-                    b.HasIndex("ReservationId1");
 
                     b.HasIndex("ReviewerId");
 
@@ -515,15 +510,9 @@ namespace Rento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Rento.Domain.Entities.Reservation", "Reservation")
-                        .WithMany()
-                        .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Rento.Domain.Entities.Reservation", null)
                         .WithMany("Reviews")
-                        .HasForeignKey("ReservationId1")
+                        .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Rento.Domain.Entities.User", "Reviewer")
@@ -539,8 +528,6 @@ namespace Rento.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
-
-                    b.Navigation("Reservation");
 
                     b.Navigation("Reviewer");
 
