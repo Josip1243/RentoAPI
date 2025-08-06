@@ -2,6 +2,7 @@
 using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
+using Rento.Application.Vehicles.Queries.GetFavoriteVehicles;
 using Rento.Domain.Entities;
 
 namespace Rento.Application.Common.Interfaces.Persistence
@@ -27,5 +28,7 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<List<VehicleUnavailabilityDto>> GetUnavailabilityListAsync(int vehicleId, DateTime fromDate);
         Task<VehicleUnavailability?> GetUnavailabilityByIdAsync(int unavailabilityId);
         void RemoveUnavailability(VehicleUnavailability entity);
+        Task<List<Vehicle>> GetFilteredFavoritesAsync(GetFavoriteVehiclesQuery request, List<int> favoriteVehicleIds, CancellationToken cancellationToken);
+        Task<bool> ExistsAsync(int vehicleId);
     }
 }

@@ -5,6 +5,7 @@ using Rento.Application.Vehicles.Common;
 using Rento.Application.Vehicles.Queries.GetAllOwnerVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehicles;
 using Rento.Application.Vehicles.Queries.GetAllVehiclesFilter;
+using Rento.Application.Vehicles.Queries.GetFavoriteVehicles;
 using Rento.Domain.Entities;
 
 namespace Rento.Infrastructure.Persistence.Repositories
@@ -238,6 +239,70 @@ namespace Rento.Infrastructure.Persistence.Repositories
         public void RemoveUnavailability(VehicleUnavailability entity)
         {
             _context.VehicleUnavailabilities.Remove(entity);
+        }
+
+        public async Task<List<Vehicle>> GetFilteredFavoritesAsync(GetFavoriteVehiclesQuery request, List<int> favoriteVehicleIds, CancellationToken cancellationToken)
+        {
+            var query = _context.Vehicles
+                .Include(v => v.Images)
+                .Where(v => favoriteVehicleIds.Contains(v.Id)) // 🔑 Ograniči samo na favorite
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                query = query.Where(v =>
+                    v.Brand.Contains(request.Search) || v.Model.Contains(request.Search));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.FuelType))
+            {
+                query = query.Where(v => v.FuelType == request.FuelType);
+            }
+
+            if (request.MinYear.HasValue)
+            {
+                query = query.Where(v => v.Year >= request.MinYear.Value);
+            }
+
+            if (request.MaxYear.HasValue)
+            {
+                query = query.Where(v => v.Year <= request.MaxYear.Value);
+            }
+
+            if (request.MinPrice.HasValue)
+            {
+                query = query.Where(v => v.Price >= request.MinPrice.Value);
+            }
+
+            if (request.MaxPrice.HasValue)
+            {
+                query = query.Where(v => v.Price <= request.MaxPrice.Value);
+            }
+
+            // Sortiranje
+            query = request.SortBy?.ToLower() switch
+            {
+                "price" => request.SortDirection?.ToLower() == "desc"
+                    ? query.OrderByDescending(v => v.Price)
+                    : query.OrderBy(v => v.Price),
+
+                "year" => request.SortDirection?.ToLower() == "desc"
+                    ? query.OrderByDescending(v => v.Year)
+                    : query.OrderBy(v => v.Year),
+
+                _ => query
+            };
+
+            // Paginacija
+            int skip = request.PageNumber * request.PageSize;
+            query = query.Skip(skip).Take(request.PageSize);
+
+            return await query.ToListAsync(cancellationToken);
+        }
+
+        public async Task<bool> ExistsAsync(int vehicleId)
+        {
+            return await _context.Vehicles.AnyAsync(v => v.Id == vehicleId);
         }
     }
 }

@@ -32,7 +32,10 @@ namespace Rento.Api.Controllers
                 UserId: userId,
                 Oib: request.Oib,
                 Address: request.Address,
-                PhoneNumber: request.PhoneNumber
+                PhoneNumber: request.PhoneNumber,
+                Iban: request.Iban,
+                AccountHolderName: request.AccountHolderName,
+                BankName: request.BankName
             );
 
             var result = await _mediator.Send(command, cancellationToken);

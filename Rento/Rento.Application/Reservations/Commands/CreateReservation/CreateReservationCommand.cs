@@ -8,6 +8,9 @@ namespace Rento.Application.Reservations.Commands.CreateReservation
     int UserId,
     int VehicleId,
     DateTime StartDate,
-    DateTime EndDate
+    DateTime EndDate,
+    string CardNumber,
+    string Expiry,
+    string Cvc
 ) : IRequest<ErrorOr<ReservationResponse>>;
 }

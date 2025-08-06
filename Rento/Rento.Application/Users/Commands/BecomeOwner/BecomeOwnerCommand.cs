@@ -7,7 +7,10 @@ namespace Rento.Application.Users.Commands.BecomeOwner
     int UserId,
     string Oib,
     string Address,
-    string PhoneNumber
+    string PhoneNumber,
+    string Iban,
+    string AccountHolderName,
+    string BankName
 ) : IRequest<ErrorOr<Success>>;
 
 }

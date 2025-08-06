@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Rento.Application.Common.Interfaces.Persistence;
+using Rento.Domain.Entities;
 using Rento.Domain.Enums;
 
 namespace Rento.Application.Users.Commands.BecomeOwner
@@ -29,6 +30,17 @@ namespace Rento.Application.Users.Commands.BecomeOwner
             user.Address = request.Address;
             user.PhoneNumber = request.PhoneNumber;
             user.Role = UserRole.Owner;
+
+            var payoutAccount = new UserPayoutAccount
+            {
+                UserId = user.Id,
+                Iban = request.Iban,
+                BankName = request.BankName,
+                AccountHolderName = request.AccountHolderName,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _userRepository.AddPayoutAccount(payoutAccount);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

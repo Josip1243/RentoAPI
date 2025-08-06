@@ -11,5 +11,6 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<User?> GetByIdAsync(int id);
         Task<List<User>> GetAllAsync();
         void Delete(User user);
+        void AddPayoutAccount(UserPayoutAccount payoutAccount);
     }
 }

@@ -70,7 +70,10 @@ namespace Rento.Api.Controllers
                 userId,
                 request.VehicleId,
                 request.StartDate,
-                request.EndDate
+                request.EndDate,
+                request.CardNumber,
+                request.Expiry,
+                request.Cvc
             );
 
             var result = await _mediator.Send(command, cancellationToken);

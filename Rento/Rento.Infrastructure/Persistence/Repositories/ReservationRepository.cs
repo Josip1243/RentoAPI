@@ -139,6 +139,16 @@ namespace Rento.Infrastructure.Persistence.Repositories
                     EndDate = r.EndDate
                 })
                 .ToListAsync();
-                }
+        }
+
+        public void AddPayment(Payment payment)
+        {
+            _context.Payments.Add(payment);
+        }
+
+        public void AddOwnerPayout(OwnerPayout payout)
+        {
+            _context.OwnerPayouts.Add(payout);
+        }
     }
 }

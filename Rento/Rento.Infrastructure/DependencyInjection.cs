@@ -40,6 +40,7 @@ namespace Rento.Infrastructure
             services.AddScoped<IImageStorageService, ImageStorageService>();
             services.AddScoped<IVehicleImageRepository, VehicleImageRepository>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 
             return services;
         }

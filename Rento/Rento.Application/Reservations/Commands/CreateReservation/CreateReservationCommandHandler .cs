@@ -12,21 +12,30 @@ namespace Rento.Application.Reservations.Commands.CreateReservation
     : IRequestHandler<CreateReservationCommand, ErrorOr<ReservationResponse>>
     {
         private readonly IReservationRepository _reservationRepository;
+        private readonly IVehicleRepository _vehicleRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateReservationCommandHandler(
             IReservationRepository reservationRepository,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IVehicleRepository vehicleRepository)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _vehicleRepository = vehicleRepository;
         }
 
         public async Task<ErrorOr<ReservationResponse>> Handle(CreateReservationCommand request, CancellationToken cancellationToken)
         {
+            var vehicle = await _vehicleRepository.GetByIdAsync(request.VehicleId);
+            if (vehicle is null)
+            {
+                return Error.NotFound("Vehicle.NotFound", "Vozilo nije pronađeno.");
+            }
+
             var reservation = new Reservation
             {
                 UserId = request.UserId,
@@ -39,6 +48,36 @@ namespace Rento.Application.Reservations.Commands.CreateReservation
             };
 
             await _reservationRepository.AddAsync(reservation, cancellationToken);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var days = (request.EndDate.Date - request.StartDate.Date).Days + 1;
+            var totalAmount = vehicle.Price * days;
+
+
+            // Fake payment 
+
+            var payment = new Payment
+            {
+                ReservationId = reservation.Id,
+                Amount = totalAmount,
+                PaymentDate = DateTime.UtcNow,
+                PaymentMethod = PaymentMethod.Card,
+                Status = PaymentStatus.Paid
+            };
+            _reservationRepository.AddPayment(payment);
+
+            var payout = new OwnerPayout
+            {
+                UserId = vehicle.OwnerId,
+                ReservationId = reservation.Id,
+                Amount = totalAmount * 0.9m, // npr. 90% ide vlasniku
+                PayoutDate = DateTime.UtcNow,
+                Status = PayoutStatus.Pending
+            };
+            _reservationRepository.AddOwnerPayout(payout);
+
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return _mapper.Map<ReservationResponse>(reservation);

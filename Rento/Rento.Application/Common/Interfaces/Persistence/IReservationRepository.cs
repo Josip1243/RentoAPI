@@ -18,6 +18,8 @@ namespace Rento.Application.Common.Interfaces.Persistence
         Task<bool> HasCompletedReservation(int userId, int vehicleId);
         Task<List<Reservation>> GetAllWithUserAndVehicleAsync();
         Task<List<BusyDateRangeDto>> GetBusyDateRangesForVehicleAsync(int vehicleId, DateTime fromDate);
+        void AddPayment(Payment payment);
+        void AddOwnerPayout(OwnerPayout payout);
 
     }
 }

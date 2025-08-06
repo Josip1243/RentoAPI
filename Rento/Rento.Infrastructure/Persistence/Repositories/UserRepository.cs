@@ -39,5 +39,10 @@ namespace Rento.Infrastructure.Persistence.Repositories
         {
             _context.Users.Remove(user);
         }
+
+        public void AddPayoutAccount(UserPayoutAccount payoutAccount)
+        {
+            _context.UserPayoutAccounts.Add(payoutAccount);
+        }
     }
 }
